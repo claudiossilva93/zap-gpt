@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import { sendWhatsAppMessage } from "./services/twilio";
 import dotenv from "dotenv";
+import { getOpenAICompletion } from "./services/openai";
 
 const app = express();
 app.use(bodyParser.urlencoded())
@@ -26,8 +27,9 @@ app.post('/chat/receive', async (req, res)=>{
     const messageBody = twilioRequestBody.Body;
     const to = twilioRequestBody.From;
     try{
-        await sendWhatsAppMessage(to, messageBody)
-        res.status(200).json({success: true, messageBody})
+        const completion = await getOpenAICompletion(messageBody);
+        await sendWhatsAppMessage(to, completion)
+        res.status(200).json({success: true, completion})
     }catch(error){
         res.status(500).json({success:false, error})
     }
