@@ -26,7 +26,7 @@ app.post('/chat/receive', async (req, res)=>{
     const messageBody = twilioRequestBody.Body;
     const to = twilioRequestBody.From;
     try{
-        await sendWhatsAppMessage(`whatsapp:${to}`, messageBody)
+        await sendWhatsAppMessage(to, messageBody)
         res.status(200).json({success: true, messageBody})
     }catch(error){
         res.status(500).json({success:false, error})
